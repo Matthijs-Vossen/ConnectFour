@@ -1,0 +1,3 @@
+from Graphics import *
+
+Graphics()
