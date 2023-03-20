@@ -1,5 +1,6 @@
 import tkinter as tk
-from tkmacosx import Button
+from tkinter import Button
+from MiniMax import *
 from Logic import *
 
 class Graphics:
@@ -27,13 +28,13 @@ class Graphics:
             self.turn_label.destroy()
         except:
             pass
-        
+        w,h = 5,3
         # Create the game board as a grid of buttons
         self.buttons = []
         for i in range(6):
             row = []
             for j in range(7):
-                button = Button(self.game_frame, width=50, height=50, bg='white',
+                button = Button(self.game_frame, width=w, height=h, bg='white',
                                 command=lambda column=j: self.make_move(column))
                 button.grid(row=i, column=j, padx=2, pady=2)
                 row.append(button)
@@ -44,6 +45,8 @@ class Graphics:
         self.turn_label.grid(row=6, columnspan=7)
 
     def make_move(self, column):
+        mm = MiniMax()
+        print(mm.get_best_move(self.game,6))
         self.game.make_move(column)
 
         # Update the button and label text to reflect the new state of the game
