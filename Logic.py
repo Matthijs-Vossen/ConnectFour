@@ -20,7 +20,7 @@ class Logic:
                 # print("place loc: ", i,column)
                 return True
             
-        print("Column is full")
+        # print("Column is full")
         return False
         
 

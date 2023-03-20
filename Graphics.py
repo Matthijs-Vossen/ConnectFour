@@ -46,7 +46,6 @@ class Graphics:
 
     def make_move(self, column):
         mm = MiniMax()
-        print(mm.get_best_move(self.game,6))
         self.game.make_move(column)
 
         # Update the button and label text to reflect the new state of the game
@@ -69,6 +68,7 @@ class Graphics:
                         self.buttons[i][j].config(state='disabled')
         else:
             self.turn_label.config(text=f"Player {self.game.player}'s turn")
+        print(mm.get_best_move(self.game,6))
 
     def create_main_menu(self):
         # Create the menu buttons
