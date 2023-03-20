@@ -68,7 +68,7 @@ class Graphics:
                         self.buttons[i][j].config(state='disabled')
         else:
             self.turn_label.config(text=f"Player {self.game.player}'s turn")
-        print(mm.get_best_move(self.game,6))
+        print(mm.get_best_move(self.game,3))
 
     def create_main_menu(self):
         # Create the menu buttons

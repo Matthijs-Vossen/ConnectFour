@@ -1,6 +1,7 @@
 import copy
 import Logic
 import random
+import math
 
 class MiniMax:
     def __init__(self) -> None:
@@ -15,78 +16,72 @@ class MiniMax:
         
     def get_best_move(self, logic : Logic, depth):
         board = copy.deepcopy(logic)
-        player = logic.player
-        best_i = -1
-        best_v = -1
-        if player == 1:#maximizing player
-            maxV = -10000000
-            maxI = -1
-            for i in range(0,7):
+        if board.player == 1:
+            best_i = -1
+            max_v = -math.inf
+            for i in range(7):
                 if not self.make_move(board, i):#move impossible
                     continue
-                value = self.minimax(board, depth - 1,-100000000, 100000000, player)
-                self.unmake_move(board, i)
-                print(value)
-                if value > maxV:
-                    maxV = value
-                    maxI = i
-            best_i = maxI
-            best_v = maxV
+                value = self.minimax(board,depth,-math.inf,math.inf,2)
+                self.unmake_move(board,i)
+
+                if value > max_v:
+                    max_v = value
+                    best_i = i
+            return best_i, max_v
         else:
-            minV = 10000000
-            minI = -1
-            for i in range(0,7):
+            best_i = -1
+            min_v = math.inf
+            for i in range(7):
                 if not self.make_move(board, i):#move impossible
                     continue
-                value = self.minimax(board, depth - 1,-100000000, 100000000, player)
-                self.unmake_move(board, i)
-                
-                if value < minV:
-                    minV = value
-                    minI = i
-            best_i = minI
-            best_v = minV
-        return best_i, best_v
+                value = self.minimax(board,depth,-math.inf,math.inf,1)
+                self.unmake_move(board,i)
+
+                if value < min_v:
+                    min_v = value
+                    best_i = i
+            return best_i, min_v
+
     
     def minimax(self, board, depth,a,b, player):
-        # print(depth)
-        if depth == 0 or board.check_win() != None:
-            # print("win condition", depth)
-            return self.evaluate(board)
-        if player == 1:
-            value = -100000
-            for i in range(7):
-                if not self.make_move(board, i):
-                    continue
-                value = max(value, self.minimax(board, depth - 1,a,b, 1))
-                self.unmake_move(board, i)
-                if value > b:
-                    break
-                a = max(a, value)
-            return value
-        else:
-            value = 100000
-            for i in range(7):
-                if not self.make_move(board, i):
-                    continue
-                value = min(value, self.minimax(board, depth - 1,a,b, 1))
-                self.unmake_move(board, i)
-                if value < a:
-                    break
-                b = min(b, value)
-            return value
-    
-    def evaluate(self, board):
         score = board.check_win()
-        if score == None:
+        if depth == 0 and score == None:
             return self.evaluate_board(board)
         
         if score == 'red':
             return 200000
         elif score == 'yellow':
             return -200000
-        else:
+        elif score == 'draw':
             return 0
+
+        if player == 1:
+            value = -math.inf
+
+            for i in range(7):
+                if not self.make_move(board, i):#move impossible
+                    continue
+                value = max(value, self.minimax(board,depth-1,a,b,2))
+                self.unmake_move(board,i)
+
+                if value > b:
+                    break
+                a = max(a, value)
+            return value
+        else:
+            value = math.inf
+
+            for i in range(7):
+                if not self.make_move(board, i):#move impossible
+                    continue
+                value = min(value,self.minimax(board,depth-1,a,b,1))
+                self.unmake_move(board,i)
+
+                if value < a:
+                    break
+                b = min(b, value)
+            return value
     
     def evaluate_board(self, b):
         """
