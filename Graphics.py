@@ -15,7 +15,8 @@ class Graphics:
 
         # Create MiniMax object
         self.mm = MiniMax()
-        self.ai_depth = 5
+        self.ai_depth = 3
+        self.suggestion_move = -1
 
         # Create the game board frame and buttons
         self.game_frame = tk.Frame(self.root)
@@ -118,17 +119,48 @@ class Graphics:
         self.clippy_text_label.pack(side="top")
 
     def set_suggestion(self):
-        move, _ = self.mm.get_best_move(self.game, 3)
+        move, _ = self.mm.get_best_move(self.game, self.ai_depth+1)
+        self.suggestion_move = move
         line = self.lines.get_random_suggestion(move)
         self.clippy_text_label.config(text=line)
 
     def set_feedback(self, player_move):
-        move, _ = self.mm.get_best_move(self.game, 3)
+        if self.suggestion_move == -1:
+            move, _ = self.mm.get_best_move(self.game, self.ai_depth+1)
+        else:
+            move = self.suggestion_move
         if move != player_move:
             line = self.lines.get_random_feedback(move)
             self.clippy_text_label.config(text=line)
         else:
             self.clippy_text_label.config(text="")
+        self.suggestion_move = -1
 
     def settings(self):
-        pass
+        # Clear the current frame
+        for widget in self.game_frame.winfo_children():
+            widget.destroy()
+
+        # Create a new frame for the settings menu
+        settings_frame = tk.Frame(self.game_frame)
+        settings_frame.pack(side="left")
+
+        # Create the dropdown menu for selecting the AI difficulty
+        self.ai_difficulty_label = tk.Label(settings_frame, text="Select AI Difficulty:")
+        self.ai_difficulty_label.grid(row=0, column=0, padx=5, pady=5)
+
+        self.ai_difficulty_var = tk.StringVar(settings_frame)
+        self.ai_difficulty_var.set(str(self.ai_depth))
+        ai_difficulty_dropdown = tk.OptionMenu(settings_frame, self.ai_difficulty_var, "1", "2", "3", "4", "5", "6", "7")
+        ai_difficulty_dropdown.grid(row=0, column=1, padx=5, pady=5)
+
+        # Create the 'return' button
+        return_button = tk.Button(settings_frame, text="Return", command=lambda: self.return_to_game(settings_frame))
+        return_button.grid(row=1, column=0, columnspan=2, padx=5, pady=5)
+
+    def return_to_game(self, settings_frame):
+        # Destroy the settings frame and return to the game frame
+        self.ai_depth = int(self.ai_difficulty_var.get())
+        settings_frame.destroy()
+        self.start_game()
+
