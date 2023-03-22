@@ -1,0 +1,20 @@
+suggestions
+“I mean, you could drop a piece in column {}, but what do I know? I’m just a paperclip.”
+“You know what they say: fortune favors the bold. And by bold, I mean anyone who doesn’t choose column {}.”
+“Sure, you COULD drop a piece in column {}, but where’s the fun in making logical decisions?”
+“Based on your previous moves, I’m sure you’ll ignore my suggestion of column {}.”
+“Oh dear. Maybe try column {} this time?”
+“I’m just a paperclip and even I can see that column {} is the best move.”
+“You know what they say: ‘Insanity is doing the same thing over and over again and expecting different results.’ Try column {} for a change.”
+“I don't want to imply that all your previous moves were terrible, but maybe try something different this time? Like column {}?”
+“If at first you don’t succeed… try making a move in column {}.”
+“Wow! Look at the position you've put yourself in... Maybe try column {}.”
+“I’m just going to throw this out there: have you thought about making a move in column {}? It’s not like it could get any worse.”
+
+
+feedback
+“Oh sure, ignore column {}. It’s not like it was the best move or anything.”
+“Who needs strategy when you can just wing it?”
+“Right, go ahead and ignore column {}. It’s not like I have an advanced algorithm guiding my suggestions or anything.”
+“Column {}? Nah, that would've been too obvious. Better to keep your opponent guessing with a completely random move like that.”
+“Oh don’t mind me and my suggestions. You just keep doing you.”

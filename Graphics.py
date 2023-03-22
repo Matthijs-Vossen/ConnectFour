@@ -4,6 +4,7 @@ from PIL import ImageTk, Image
 import platform
 from MiniMax import *
 from Logic import *
+from Lines import *
 
 class Graphics:
 
@@ -11,6 +12,10 @@ class Graphics:
         self.root = tk.Tk()
         self.root.title("Connect 4")
         self.root.resizable(False, False)
+
+        # Create MiniMax object
+        self.mm = MiniMax()
+        self.ai_depth = 5
 
         # Create the game board frame and buttons
         self.game_frame = tk.Frame(self.root)
@@ -20,9 +25,11 @@ class Graphics:
         # Create the AI menu
         self.ai_frame = tk.Frame(self.root)
         self.ai_frame.pack(side="right")
-        self.ai_frame.config(width=300, height=150)
+        self.ai_frame.config(width=300, height=220)
         self.ai_frame.pack_propagate(0)
         self.create_ai_frame()
+
+        self.lines = Lines('lines/clippy_lines.txt')
 
         self.root.mainloop()
 
@@ -53,7 +60,7 @@ class Graphics:
             self.buttons.append(row)
 
         # Create a label to display the current player's turn
-        self.turn_label = tk.Label(self.game_frame, text=f"Player {self.game.player}'s turn", font=("Arial", 16))
+        self.turn_label = tk.Label(self.game_frame, text="", font=("Arial", 16))
         self.turn_label.grid(row=6, columnspan=7)
 
         # Create the menu buttons
@@ -63,17 +70,30 @@ class Graphics:
         settings_button = tk.Button(self.game_frame, text="Settings", command=self.settings)
         settings_button.grid(row=8, columnspan=7)
 
+        settings_button = tk.Button(self.game_frame, text="Hint", command=self.set_suggestion)
+        settings_button.grid(row=9, columnspan=7)
+
     def make_move(self, column):
-        mm = MiniMax()
+        self.set_feedback(column)
         self.game.make_move(column)
 
-        # Update the button and label text to reflect the new state of the game
+        self.update_graphics(column)
+        self.check_winner(column)
+
+        ai_move, _ = self.mm.get_best_move(self.game, self.ai_depth)
+        self.game.make_move(ai_move)
+        
+        self.update_graphics(ai_move)
+        self.check_winner(ai_move)
+
+    def update_graphics(self, column):
         for i in range(6):
             if self.game.board[i][column] == 'red':
                 self.buttons[i][column].config(bg='red')
             elif self.game.board[i][column] == 'yellow':
                 self.buttons[i][column].config(bg='yellow')
 
+    def check_winner(self, column):
         winner = self.game.check_win()
         if winner:
             self.turn_label.config(text=f"{winner} player wins!")
@@ -85,9 +105,6 @@ class Graphics:
                         self.buttons[i][j].config(bg=color)
                     else:
                         self.buttons[i][j].config(state='disabled')
-        else:
-            self.turn_label.config(text=f"Player {self.game.player}'s turn")
-        print(mm.get_best_move(self.game,3))
 
     def create_ai_frame(self):
         # Create an object of tkinter ImageTk
@@ -97,11 +114,21 @@ class Graphics:
         self.img_label = tk.Label(self.ai_frame, image=self.img)
         self.img_label.pack(side="bottom")
 
-        self.clippy_text_label = tk.Label(self.ai_frame, text="Lorem ipsum.", height=100, wraplength=290)
+        self.clippy_text_label = tk.Label(self.ai_frame, text="“Oh great, another game of Connect Four. Hi, I’m Clippy - your paperclip assistant. I guess I’m here to provide you with hints and suggestions as you play against the computer. Not like I have anything better to do. Let’s just get this over with.”", height=250, wraplength=290)
         self.clippy_text_label.pack(side="top")
 
-    def set_suggestion(self, text: str):
-        self.clippy_text_label.config(text=text)
+    def set_suggestion(self):
+        move, _ = self.mm.get_best_move(self.game, 3)
+        line = self.lines.get_random_suggestion(move)
+        self.clippy_text_label.config(text=line)
+
+    def set_feedback(self, player_move):
+        move, _ = self.mm.get_best_move(self.game, 3)
+        if move != player_move:
+            line = self.lines.get_random_feedback(move)
+            self.clippy_text_label.config(text=line)
+        else:
+            self.clippy_text_label.config(text="")
 
     def settings(self):
         pass
