@@ -312,24 +312,24 @@ class Graphics:
                         pady=5)
 
 
-def return_to_game(self, settings_frame: tk.Frame):
-    """Return to game from settings menu.
+    def return_to_game(self, settings_frame: tk.Frame):
+        """Return to game from settings menu.
 
-    This method destroys the settings frame and returns to the game frame. It also updates the AI depth based on user selection in the settings menu.
+        This method destroys the settings frame and returns to the game frame. It also updates the AI depth based on user selection in the settings menu.
 
-    Args:
-        settings_frame (tk.Frame): The frame containing the settings menu.
+        Args:
+            settings_frame (tk.Frame): The frame containing the settings menu.
 
-    Returns:
-        None
-    """
-    
-    # Update AI depth based on user selection
-    self.ai_depth = int(self.ai_difficulty_var.get())
-    
-    # Destroy settings frame and return to game
-    settings_frame.destroy()
-    
-    # Start game with updated AI depth
-    self.start_game()
+        Returns:
+            None
+        """
+        
+        # Update AI depth based on user selection
+        self.ai_depth = int(self.ai_difficulty_var.get())
+        
+        # Destroy settings frame and return to game
+        settings_frame.destroy()
+        
+        # Start game with updated AI depth
+        self.start_game()
 
