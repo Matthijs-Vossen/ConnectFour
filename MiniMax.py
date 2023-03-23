@@ -16,6 +16,7 @@ class MiniMax:
         
     def get_best_move(self, logic : Logic, depth):
         board = copy.deepcopy(logic)
+        
         if board.player == 1:
             best_i = -1
             max_v = -math.inf

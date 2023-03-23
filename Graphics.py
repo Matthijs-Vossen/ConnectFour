@@ -137,10 +137,11 @@ class Graphics:
         self.set_feedback(column)
         self.game.make_move(column)
         self.update_graphics(column)
-        self.check_winner()
-
+        win = self.check_winner()
+        if win:
+            return
         # Make a move for the AI player
-        ai_move, _ = self.mm.get_best_move(self.game, self.ai_depth)
+        ai_move, score = self.mm.get_best_move(self.game, self.ai_depth)
         self.game.make_move(ai_move)
         self.update_graphics(ai_move)
         self.check_winner()
@@ -190,6 +191,7 @@ class Graphics:
                         self.buttons[i][j].config(bg=color)
                     else:
                         self.buttons[i][j].config(state='disabled')
+        return winner != None
 
     def create_ai_frame(self):
         """Create and set up the AI frame with an image of Clippy and a label for its text.
