@@ -140,13 +140,13 @@ class Graphics:
         if self.move_count > 1:
             self.set_feedback(column)
 
-        self.game.make_move(column)
+        move_made = self.game.make_move(column)
         self.update_graphics(column)
         win = self.check_winner()
         if win:
             return
         
-        if self.style != "Play against yourself":
+        if self.style != "Play against yourself" and move_made:
             # Make a move for the AI player
             ai_move, score = self.mm.get_best_move(self.game, self.ai_depth)
             self.game.make_move(ai_move)
