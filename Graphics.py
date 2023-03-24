@@ -43,6 +43,7 @@ class Graphics:
         self.mm = MiniMax()
         self.ai_depth = 3
         self.suggestion_move = -1
+        self.move_count = 0
         self.style = "Play against the computer"
 
         # Create the game board frame and buttons
@@ -134,8 +135,11 @@ class Graphics:
         Returns:
             None
         """
+        self.move_count += 1
         # Update the game logic and graphics for the player's move
-        self.set_feedback(column)
+        if self.move_count > 1:
+            self.set_feedback(column)
+
         self.game.make_move(column)
         self.update_graphics(column)
         win = self.check_winner()
@@ -216,7 +220,7 @@ class Graphics:
         # Create a label for Clippy's text
         self.clippy_text_label = tk.Label(
             self.ai_frame, 
-            text="\"Oh great, another game of Connect Four. Hi, I'm Clippy - your paperclip assistant. I guess I'm here to provide you with hints and suggestions as you play against the computer. Not like I have anything better to do. Let's just get this over with.\"",
+            text="\"Oh great, another game of Connect Four. Hi, I'm Clippy - your paperclip assistant. I guess I'm here to provide you with hints and suggestions as you play against the computer or yourself. Not like I have anything better to do. Let's just get this over with.\"",
             height=250, 
             wraplength=290
         )
@@ -235,9 +239,20 @@ class Graphics:
         """
         # Get best move using MiniMax algorithm
         move, _ = self.mm.get_best_move(self.game, self.ai_depth + 1)
-        
+
         # Set suggestion move
         self.suggestion_move = move
+
+        nrows = len(self.game.board)
+        for i in range(nrows):
+            if self.game.board[i][move] != ' ':
+                self.buttons[i-1][move].focus_set()
+                break
+            elif i == nrows-1:
+                self.buttons[nrows-1][move].focus_set()
+                break
+        
+        #self.game.board
         
         # Get random suggestion line from Clippy lines
         line = self.lines.get_random_suggestion(move+1)
@@ -347,7 +362,7 @@ class Graphics:
         settings_frame.destroy()
 
         # Remove any text from 
-        self.clippy_text_label.config(text="\"Oh great, another game of Connect Four. Hi, I'm Clippy - your paperclip assistant. I guess I'm here to provide you with hints and suggestions as you play against the computer. Not like I have anything better to do. Let's just get this over with.\"")
+        self.clippy_text_label.config(text="\"Oh great, another game of Connect Four. Hi, I'm Clippy - your paperclip assistant. I guess I'm here to provide you with hints and suggestions as you play against the computer or yourself. Not like I have anything better to do. Let's just get this over with.\"")
 
         # Start game with updated AI depth
         self.start_game()
