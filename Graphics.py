@@ -43,6 +43,7 @@ class Graphics:
         self.mm = MiniMax()
         self.ai_depth = 3
         self.suggestion_move = -1
+        self.style = "Play against the computer"
 
         # Create the game board frame and buttons
         self.game_frame = tk.Frame(self.root)
@@ -140,11 +141,13 @@ class Graphics:
         win = self.check_winner()
         if win:
             return
-        # Make a move for the AI player
-        ai_move, score = self.mm.get_best_move(self.game, self.ai_depth)
-        self.game.make_move(ai_move)
-        self.update_graphics(ai_move)
-        self.check_winner()
+        
+        if self.style != "Play against yourself":
+            # Make a move for the AI player
+            ai_move, score = self.mm.get_best_move(self.game, self.ai_depth)
+            self.game.make_move(ai_move)
+            self.update_graphics(ai_move)
+            self.check_winner()
 
     def update_graphics(self, column: int):
         """Update the graphics of the game board to reflect a move.
@@ -213,7 +216,7 @@ class Graphics:
         # Create a label for Clippy's text
         self.clippy_text_label = tk.Label(
             self.ai_frame, 
-            text="“Oh great, another game of Connect Four. Hi, I’m Clippy - your paperclip assistant. I guess I’m here to provide you with hints and suggestions as you play against the computer. Not like I have anything better to do. Let’s just get this over with.”",
+            text="\"Oh great, another game of Connect Four. Hi, I'm Clippy - your paperclip assistant. I guess I'm here to provide you with hints and suggestions as you play against the computer. Not like I have anything better to do. Let's just get this over with.\"",
             height=250, 
             wraplength=290
         )
@@ -237,7 +240,7 @@ class Graphics:
         self.suggestion_move = move
         
         # Get random suggestion line from Clippy lines
-        line = self.lines.get_random_suggestion(move)
+        line = self.lines.get_random_suggestion(move+1)
         
         # Update Clippy text label with suggestion line
         self.clippy_text_label.config(text=line)
@@ -264,7 +267,7 @@ class Graphics:
         # If suggested and actual moves are different,
         # update Clippy text label with feedback line
         if move != player_move:
-            line = self.lines.get_random_feedback(move)
+            line = self.lines.get_random_feedback(move+1)
             self.clippy_text_label.config(text=line)
         else:
             self.clippy_text_label.config(text="")
@@ -297,11 +300,21 @@ class Graphics:
         self.ai_difficulty_label.grid(row=0, column=0, padx=5, pady=5)
 
         # Create dropdown menu for AI difficulty selection
+        self.style_var = tk.StringVar(settings_frame)
+        self.style_var.set(str(self.style))
+        style_dropdown = tk.OptionMenu(settings_frame, self.style_var,
+                                            "Play against the computer", "Play against yourself")
+        style_dropdown.grid(row=0, column=2, padx=5, pady=5)
+
+
+        # Create dropdown menu for AI difficulty selection
         self.ai_difficulty_var = tk.StringVar(settings_frame)
         self.ai_difficulty_var.set(str(self.ai_depth))
         ai_difficulty_dropdown = tk.OptionMenu(settings_frame, self.ai_difficulty_var,
-                                            "1", "2", "3", "4", "5", "6", "7")
+                                            "1", "2", "3", "4", "5")
         ai_difficulty_dropdown.grid(row=0, column=1, padx=5, pady=5)
+
+        self.clippy_text_label.config(text="Can't even beat the computer huh? Interesting...")
 
         # Create 'return' button to return to game
         return_button = tk.Button(settings_frame,
@@ -328,10 +341,14 @@ class Graphics:
         
         # Update AI depth based on user selection
         self.ai_depth = int(self.ai_difficulty_var.get())
+        self.style = str(self.style_var.get())
         
         # Destroy settings frame and return to game
         settings_frame.destroy()
-        
+
+        # Remove any text from 
+        self.clippy_text_label.config(text="\"Oh great, another game of Connect Four. Hi, I'm Clippy - your paperclip assistant. I guess I'm here to provide you with hints and suggestions as you play against the computer. Not like I have anything better to do. Let's just get this over with.\"")
+
         # Start game with updated AI depth
         self.start_game()
 
